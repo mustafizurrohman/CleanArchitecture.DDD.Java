@@ -3,12 +3,14 @@ package com.mustafizur.cleanarchitecture.api.error;
 import com.mustafizur.cleanarchitecture.core.exception.ConflictException;
 import com.mustafizur.cleanarchitecture.core.exception.DomainException;
 import com.mustafizur.cleanarchitecture.core.exception.NotFoundException;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException.class)
     ProblemDetail handleDomain(DomainException exception) {
-        return problem(HttpStatus.UNPROCESSABLE_ENTITY, "Domain rule violation", exception.getMessage());
+        return problem(HttpStatus.UNPROCESSABLE_CONTENT, "Domain rule violation", exception.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -60,7 +62,7 @@ public class GlobalExceptionHandler {
         var errors = exception.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
                         violation -> violation.getPropertyPath().toString(),
-                        violation -> violation.getMessage(),
+                        ConstraintViolation::getMessage,
                         (left, right) -> left));
         var detail = problem(HttpStatus.BAD_REQUEST, "Validation failed", "One or more values are invalid");
         detail.setProperty("errors", errors);
@@ -71,7 +73,7 @@ public class GlobalExceptionHandler {
     ProblemDetail handleBodyValidation(MethodArgumentNotValidException exception) {
         var errors = exception.getBindingResult().getFieldErrors().stream()
                 .collect(Collectors.toMap(
-                        error -> error.getField(),
+                        FieldError::getField,
                         error -> error.getDefaultMessage() == null ? "invalid value" : error.getDefaultMessage(),
                         (left, right) -> left));
         var detail = problem(HttpStatus.BAD_REQUEST, "Validation failed", "Request body is invalid");

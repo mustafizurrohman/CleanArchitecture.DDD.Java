@@ -55,4 +55,38 @@ class CustomerApiIntegrationTest {
                 .andExpect(jsonPath("$.title", is("Validation failed")))
                 .andExpect(jsonPath("$.errors.email").exists());
     }
+
+    @Test
+    void notFoundCustomerReturnsProblemDetails() throws Exception {
+        mvc.perform(get("/api/v1/customers/00000000-0000-0000-0000-000000000000"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title", is("Resource not found")));
+    }
+
+    @Test
+    void duplicateCustomerReturnsConflictProblemDetails() throws Exception {
+        mvc.perform(post("/api/v1/customers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name":"Grace Hopper","email":"grace.conflict@example.com"}
+                                """))
+                .andExpect(status().isCreated());
+
+        mvc.perform(post("/api/v1/customers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"name":"Grace Hopper Duplicate","email":"grace.conflict@example.com"}
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title", is("Conflict")));
+    }
+
+    @Test
+    void malformedBodyReturnsBadRequestProblemDetails() throws Exception {
+        mvc.perform(post("/api/v1/customers")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("invalid-json"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title", is("Malformed request")));
+    }
 }
