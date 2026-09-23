@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.mustafizur</groupId>
+    <artifactId>cleanarchitecture-ddd</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>CleanArchitecture.DDD.Java</name>
+    <description>Clean Architecture + DDD reference implementation using Spring Boot</description>
+
+    <modules>
+        <module>cleanarchitecture-core</module>
+        <module>cleanarchitecture-domain</module>
+        <module>cleanarchitecture-application</module>
+        <module>cleanarchitecture-infrastructure</module>
+        <module>cleanarchitecture-api</module>
+        <module>code-integrity-tests</module>
+    </modules>
+
+    <properties>
+        <!-- Spring Boot 4.1.1 officially supports Java through 26. -->
+        <java.version>26</java.version>
+        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <resilience4j.version>2.4.0</resilience4j.version>
+        <springdoc.version>3.1.1</springdoc.version>
+        <jobrunr.version>8.8.2</jobrunr.version>
+        <archunit.version>1.5.0</archunit.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-spring-boot4</artifactId>
+                <version>${resilience4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jobrunr</groupId>
+                <artifactId>jobrunr-spring-boot-4-starter</artifactId>
+                <version>${jobrunr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tngtech.archunit</groupId>
+                <artifactId>archunit-junit5</artifactId>
+                <version>${archunit.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <release>${maven.compiler.release}</release>
+                        <parameters>true</parameters>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <!-- Experimental only: Spring Boot 4.1.1 does not yet officially support JDK 27. -->
+    <profiles>
+        <profile>
+            <id>java-27-experimental</id>
+            <properties>
+                <java.version>27</java.version>
+                <maven.compiler.release>27</maven.compiler.release>
+            </properties>
+        </profile>
+    </profiles>
+</project>

@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: cleanarchitecture-ddd-java
+  datasource:
+    url: jdbc:h2:mem:cleanarchitecture;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+  threads:
+    virtual:
+      enabled: true
+  main:
+    keep-alive: true
+
+server:
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+
+logging:
+  level:
+    root: INFO
+    com.mustafizur.cleanarchitecture: INFO
+  structured:
+    format:
+      console: logstash
+
+resilience4j:
+  retry:
+    instances:
+      externalService:
+        max-attempts: 3
+        wait-duration: 250ms
+  circuitbreaker:
+    instances:
+      externalService:
+        sliding-window-size: 10
+        minimum-number-of-calls: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+
+jobrunr:
+  background-job-server:
+    enabled: true
+  dashboard:
+    enabled: true
+    port: 8000
+  miscellaneous:
+    allow-anonymous-data-usage: false
+
+app:
+  external-service:
+    base-url: https://httpbin.org
