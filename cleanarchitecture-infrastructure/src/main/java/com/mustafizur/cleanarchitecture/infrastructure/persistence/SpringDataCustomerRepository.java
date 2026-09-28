@@ -16,6 +16,6 @@ interface SpringDataCustomerRepository extends JpaRepository<CustomerJpaEntity, 
     Page<CustomerJpaEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update CustomerJpaEntity c set c.deleted = true, c.updatedAt = CURRENT_TIMESTAMP where c.id = :id")
+    @Query("update CustomerJpaEntity c set c.deleted = true, c.updatedAt = CURRENT_INSTANT where c.id = :id")
     int softDeleteById(@Param("id") UUID id);
 }

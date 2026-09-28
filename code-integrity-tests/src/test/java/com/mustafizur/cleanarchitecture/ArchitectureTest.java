@@ -14,19 +14,19 @@ class ArchitectureTest {
 
     @ArchTest
     static final ArchRule domain_must_not_depend_on_spring_or_outer_layers = noClasses()
-            .that().resideInAPackage("..domain..")
+            .that().resideInAPackage("com.mustafizur.cleanarchitecture.domain..")
             .should().dependOnClassesThat()
-            .resideInAnyPackage("org.springframework..", "..application..", "..infrastructure..", "..api..");
+            .resideInAnyPackage("org.springframework..", "com.mustafizur.cleanarchitecture.application..", "com.mustafizur.cleanarchitecture.infrastructure..", "com.mustafizur.cleanarchitecture.api..");
 
     @ArchTest
     static final ArchRule core_must_not_depend_on_outer_layers = noClasses()
-            .that().resideInAPackage("..core..")
+            .that().resideInAPackage("com.mustafizur.cleanarchitecture.core..")
             .should().dependOnClassesThat()
-            .resideInAnyPackage("..domain..", "..application..", "..infrastructure..", "..api..", "org.springframework..");
+            .resideInAnyPackage("com.mustafizur.cleanarchitecture.domain..", "com.mustafizur.cleanarchitecture.application..", "com.mustafizur.cleanarchitecture.infrastructure..", "com.mustafizur.cleanarchitecture.api..", "org.springframework..");
 
     @ArchTest
     static final ArchRule application_must_not_depend_on_infrastructure_or_api = noClasses()
-            .that().resideInAPackage("..application..")
+            .that().resideInAPackage("com.mustafizur.cleanarchitecture.application..")
             .should().dependOnClassesThat()
-            .resideInAnyPackage("..infrastructure..", "..api..");
+            .resideInAnyPackage("com.mustafizur.cleanarchitecture.infrastructure..", "com.mustafizur.cleanarchitecture.api..");
 }
